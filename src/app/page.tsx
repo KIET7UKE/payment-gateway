@@ -31,50 +31,52 @@ export default function PaymentPage() {
 
   return (
     <ErrorBoundary>
-      <main className="min-h-screen selection:bg-indigo-500/30 selection:text-white">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:py-20">
+      <main className="min-h-screen bg-background selection:bg-indigo-500/30 selection:text-white">
+        <div className="mx-auto max-w-7xl px-6 py-12">
           
-          {/* Header */}
-          <header className="mb-16 flex flex-col items-center justify-between gap-6 sm:flex-row sm:px-4">
-            <div className="flex items-center gap-5">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 shadow-[0_0_40px_rgba(99,102,241,0.5)] ring-1 ring-white/20">
-                <ShieldCheck size={32} className="text-white" />
+          {/* Header - More Compact & Professional */}
+          <header className="mb-12 flex items-center justify-between border-b border-white/5 pb-8">
+            <div className="flex items-center gap-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 shadow-[0_0_20px_rgba(99,102,241,0.3)]">
+                <ShieldCheck size={20} className="text-white" />
               </div>
-              <div className="space-y-1">
-                <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
-                  Payment Dashboard
+              <div>
+                <h1 className="text-xl font-bold tracking-tight text-white uppercase">
+                  Control Center
                 </h1>
                 <div className="flex items-center gap-2">
-                  <Zap size={12} className="text-indigo-400 fill-indigo-400" />
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.4em]">
-                    SecurePay <span className="text-white/20 mx-1">|</span> Fast & Secure
+                  <Zap size={10} className="text-indigo-400 fill-indigo-400" />
+                  <p className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em]">
+                    Obsidian Prime Gateway
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/2 px-6 py-3 backdrop-blur-xl">
-              <div className="relative flex h-2 w-2">
+            <div className="hidden items-center gap-3 rounded-full border border-white/5 bg-white/2 px-4 py-2 sm:flex">
+              <div className="relative flex h-1.5 w-1.5">
                 <div className="absolute h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75" />
-                <div className="relative h-2 w-2 rounded-full bg-indigo-400" />
+                <div className="relative h-1.5 w-1.5 rounded-full bg-indigo-400" />
               </div>
-              <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">
-                Live Secure
+              <span className="text-[9px] font-black text-indigo-400 uppercase tracking-[0.2em]">
+                Live Terminal
               </span>
             </div>
           </header>
 
-          {/* Core Interface */}
-          <div className="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:items-start lg:gap-24">
+          {/* Main Grid - Balanced 2-Column Layout */}
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start">
             
-            {/* Left Column: Form */}
-            <div className="space-y-12">
+            {/* Left Section: Payment Logic (Cols 1-7) */}
+            <div className="lg:col-span-7 space-y-6">
               {paymentStatus === 'idle' && (
-                <CardInput 
-                  ref={firstFieldRef}
-                  onSubmit={submitPayment}
-                  onValuesChange={setPreviewValues}
-                />
+                <div className="animate-in fade-in slide-in-from-left-4 duration-500">
+                  <CardInput 
+                    ref={firstFieldRef}
+                    onSubmit={submitPayment}
+                    onValuesChange={setPreviewValues}
+                  />
+                </div>
               )}
               
               {paymentStatus !== 'idle' && (
@@ -87,9 +89,9 @@ export default function PaymentPage() {
               )}
             </div>
 
-            {/* Right Column: Card & History */}
-            <div className="space-y-16">
-              <div className="flex flex-col items-center animate-in fade-in slide-in-from-right-10 duration-700">
+            {/* Right Section: Visualization (Cols 8-12) */}
+            <div className="lg:col-span-5 space-y-8">
+              <div className="flex flex-col items-center animate-in fade-in slide-in-from-right-4 duration-700">
                 <CardPreview 
                   cardholderName={previewValues.cardholderName}
                   cardNumber={previewValues.cardNumber}
@@ -99,21 +101,21 @@ export default function PaymentPage() {
                 />
               </div>
 
-              <TransactionHistory />
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+                <TransactionHistory />
+              </div>
             </div>
 
           </div>
 
-          {/* Footer */}
-          <footer className="mt-24 border-t border-white/5 pt-12 flex flex-col items-center gap-8">
-            <div className="flex flex-wrap justify-center gap-12 opacity-10 transition-all hover:opacity-40 grayscale contrast-125">
-              <span className="text-xs font-black tracking-[0.3em] text-white">VISA</span>
-              <span className="text-xs font-black tracking-[0.3em] text-white">MASTERCARD</span>
-              <span className="text-xs font-black tracking-[0.3em] text-white">SECURE</span>
-              <span className="text-xs font-black tracking-[0.3em] text-white">ENCRYPTED</span>
+          {/* Footer - Minimalist */}
+          <footer className="mt-20 border-t border-white/5 pt-8 flex flex-col items-center sm:flex-row sm:justify-between opacity-30 transition-opacity hover:opacity-100">
+             <div className="flex gap-8 mb-4 sm:mb-0 grayscale">
+              <span className="text-[8px] font-black tracking-[0.2em] text-white uppercase">PCI-DSS Compliant</span>
+              <span className="text-[8px] font-black tracking-[0.2em] text-white uppercase">256-bit AES</span>
             </div>
-            <p className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.5em]">
-              &copy; 2026 SecurePay Inc.
+            <p className="text-[8px] font-black text-zinc-600 uppercase tracking-[0.3em]">
+              &copy; 2026 Obsidian Prime Terminal. All Rights Reserved.
             </p>
           </footer>
         </div>
