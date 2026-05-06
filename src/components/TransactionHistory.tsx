@@ -187,7 +187,7 @@ export default function TransactionHistory() {
             <div className="flex items-center justify-between border-b border-white/10 bg-white/2 px-8 py-5">
               <div className="flex items-center gap-4">
                 <History size={16} className="text-indigo-400" />
-                <h2 className="text-sm font-black text-white uppercase tracking-tight">Transaction Logs</h2>
+                <h2 className="text-sm font-black text-white uppercase">Transaction Logs</h2>
               </div>
               <button onClick={() => setIsModalOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-zinc-500 hover:text-white transition-all"><X size={16} /></button>
             </div>
@@ -203,13 +203,7 @@ export default function TransactionHistory() {
               </div>
               <div className="hidden flex-1 overflow-y-auto p-10 sm:block">
                 {activeModalTx ? (
-                  <div className="mx-auto max-w-xs">
-                    <div className="mb-8 flex flex-col items-center text-center">
-                      <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border-2 ${getStatusBadge(activeModalTx.status)}`}>
-                        {activeModalTx.status === 'success' ? <ArrowUpRight size={24} /> : <ArrowDownLeft size={24} />}
-                      </div>
-                      <h3 className="text-2xl font-black text-white tracking-tight">{formatCurrency(activeModalTx.amount, activeModalTx.currency)}</h3>
-                    </div>
+                  <div className="">
                     <DetailsPanel tx={activeModalTx} />
                   </div>
                 ) : (
