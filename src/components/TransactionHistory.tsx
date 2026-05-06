@@ -214,7 +214,7 @@ export default function TransactionHistory() {
                   </div>
                 ) : (
                   <div className="flex h-full items-center justify-center text-zinc-600 text-[10px] font-black uppercase tracking-widest text-center px-12">
-                    Select an entry from the ledger to view secure details
+                    Select an entry from the history to view secure details
                   </div>
                 )}
               </div>

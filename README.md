@@ -8,7 +8,7 @@ SoluLab Mock Payment Gateway is a highly-polished, enterprise-grade mock payment
 - **Interactive Card Preview**: Live visual representation of the credit card that updates as the user types, adapting to Visa, Mastercard, and Amex.
 - **Robust Payment Lifecycle**: Simulates Idle, Processing, Success, Failed, and Timeout states.
 - **Retry Mechanism**: Allows up to 3 retries for a failed transaction using the same Transaction ID.
-- **Persistent Transaction Ledger**: Stores transaction history in `localStorage` with detailed failure reasoning.
+- **Persistent Transaction History**: Stores transaction history in `localStorage` with detailed failure reasoning.
 - **Accessibility (a11y) First**: Full ARIA support (`aria-describedby`, `aria-invalid`), screen-reader friendly labels, and focus management.
 - **Premium UI/UX**: Skeleton loading states, glassmorphism panels, CSS micro-animations, and dynamic visual feedback.
 
@@ -75,7 +75,7 @@ src/
 │   ├── CardInput.tsx         # Payment form with real-time validation
 │   ├── CardPreview.tsx       # Live interactive credit card visualization
 │   ├── StatusScreen.tsx      # Modal for Processing/Success/Failure states
-│   ├── TransactionHistory.tsx# Transaction ledger UI
+│   ├── TransactionHistory.tsx# Transaction history UI
 │   └── ErrorBoundary.tsx     # React Error Boundary for app stability
 ├── hooks/
 │   ├── usePayment.ts         # Core business logic for API communication & aborts
@@ -84,7 +84,7 @@ src/
 ├── store/
 │   ├── index.ts              # Redux store configuration
 │   ├── paymentSlice.ts       # Manages current payment lifecycle state
-│   └── transactionSlice.ts   # Manages the historical ledger of transactions
+│   └── transactionSlice.ts   # Manages the historical log of transactions
 ├── types/
 │   └── index.ts              # Global TypeScript interfaces & types
 └── utils/
