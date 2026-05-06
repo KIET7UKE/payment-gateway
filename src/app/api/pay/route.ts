@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PaymentPayload, GatewayResponse } from '@/types';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 15;
 
 interface ApiResponse extends GatewayResponse {}
 

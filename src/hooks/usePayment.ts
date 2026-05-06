@@ -46,7 +46,7 @@ export function usePayment() {
           updates: { status: 'success' } 
         }));
       } else {
-        const reason = data.failureReason || 'Payment failed';
+        const reason = data.failureReason || (data as any).error || 'Payment failed';
         console.warn(`[usePayment] Payment FAILED for TX: ${payload.transactionId} | Reason: ${reason}`);
         dispatch(paymentFailed(reason));
         dispatch(updateTransaction({ 
@@ -64,7 +64,7 @@ export function usePayment() {
         }));
       } else {
         console.error(`[usePayment] Network Error for TX: ${payload.transactionId}`, error);
-        const errorMessage = 'Network error. Please try again.';
+        const errorMessage = error?.message || 'Network error. Please try again.';
         dispatch(paymentFailed(errorMessage));
         dispatch(updateTransaction({ 
           id: payload.transactionId, 
