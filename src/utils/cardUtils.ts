@@ -29,12 +29,12 @@ export function formatCardNumber(rawDigits: string, cardType: CardType): string 
       digits.substring(4, 10),
       digits.substring(10, 15),
     ].filter(Boolean);
-    return parts.join('-');
+    return parts.join(' ');
   }
   
   // Default: groups of 4
   const parts = digits.match(/.{1,4}/g) || [];
-  return parts.join('-').substring(0, 19); // 16 digits + 3 hyphens
+  return parts.join(' ').substring(0, 19); // 16 digits + 3 spaces
 }
 
 export function getCvvLength(cardType: CardType): number {

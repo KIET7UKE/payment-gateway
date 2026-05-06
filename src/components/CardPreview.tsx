@@ -24,7 +24,7 @@ const CardPreview: React.FC<CardPreviewProps> = ({
     const rawDigits = cardNumber.replace(/\D/g, '');
     const maxLen = cardType === 'amex' ? 15 : 16;
     const paddedDigits = rawDigits.padEnd(maxLen, 'x');
-    return formatCardNumber(paddedDigits, cardType);
+    return formatCardNumber(paddedDigits, cardType).replace(/\s/g, '-');
   }, [cardNumber, cardType]);
 
   const formattedName = cardholderName.toUpperCase() || 'CARDHOLDER NAME';
