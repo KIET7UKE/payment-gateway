@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo, forwardRef } from 'react';
 import { 
   PaymentPayload, 
   CardDetails, 
@@ -28,9 +28,17 @@ import { Loader2, CreditCard, Lock, User, Calendar } from 'lucide-react';
 
 interface CardInputProps {
   onSubmit: (payload: PaymentPayload) => void;
+  // Live update props for preview
+  onValuesChange: (values: {
+    cardholderName: string;
+    cardNumber: string;
+    expiryMonth: string;
+    expiryYear: string;
+    cardType: CardType;
+  }) => void;
 }
 
-export default function CardInput({ onSubmit }: CardInputProps) {
+const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onValuesChange }, ref) => {
   const dispatch = useAppDispatch();
   const paymentStatus = useAppSelector((state) => state.payment.status);
   const attemptCount = useAppSelector((state) => state.payment.attemptCount);
@@ -47,6 +55,18 @@ export default function CardInput({ onSubmit }: CardInputProps) {
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 
   const cardType = useMemo(() => detectCardType(cardNumber), [cardNumber]);
+
+  // Notify parent of changes for real-time preview
+  const notifyChange = (updates: any) => {
+    const [m, y] = (updates.expiry !== undefined ? updates.expiry : expiry).split('/');
+    onValuesChange({
+      cardholderName: updates.cardholderName !== undefined ? updates.cardholderName : cardholderName,
+      cardNumber: (updates.cardNumber !== undefined ? updates.cardNumber : cardNumber).replace(/\s/g, ''),
+      expiryMonth: m || '',
+      expiryYear: y || '',
+      cardType: updates.cardNumber !== undefined ? detectCardType(updates.cardNumber) : cardType,
+    });
+  };
 
   // Errors State
   const [errors, setErrors] = useState<FormErrors>({});
@@ -89,6 +109,7 @@ export default function CardInput({ onSubmit }: CardInputProps) {
     const trimmed = raw.substring(0, maxDigits);
     const formatted = formatCardNumber(trimmed, cardType);
     setCardNumber(formatted);
+    notifyChange({ cardNumber: formatted });
     if (touched.cardNumber) validateField('cardNumber', trimmed);
   };
 
@@ -101,6 +122,7 @@ export default function CardInput({ onSubmit }: CardInputProps) {
       formatted = val.substring(0, 2) + '/' + val.substring(2);
     }
     setExpiry(formatted);
+    notifyChange({ expiry: formatted });
     if (touched.expiry) validateField('expiry', formatted);
   };
 
@@ -156,7 +178,7 @@ export default function CardInput({ onSubmit }: CardInputProps) {
   const allTouched = Object.keys(touched).length >= 5;
 
   return (
-    <div className="mx-auto max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200">
+    <div className="mx-auto w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200">
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white">
         <h2 className="text-xl font-bold">Secure Checkout</h2>
         <p className="text-sm opacity-90">Enter your payment details below</p>
@@ -171,10 +193,12 @@ export default function CardInput({ onSubmit }: CardInputProps) {
           </label>
           <input
             id="cardholderName"
+            ref={ref}
             type="text"
             value={cardholderName}
             onChange={(e) => {
               setCardholderName(e.target.value);
+              notifyChange({ cardholderName: e.target.value });
               if (touched.cardholderName) validateField('cardholderName', e.target.value);
             }}
             onBlur={() => handleBlur('cardholderName', cardholderName)}
@@ -273,7 +297,10 @@ export default function CardInput({ onSubmit }: CardInputProps) {
           <div className="flex gap-2">
             <select
               value={currency}
-              onChange={(e) => setCurrency(e.target.value as Currency)}
+              onChange={(e) => {
+                const newCurrency = e.target.value as Currency;
+                setCurrency(newCurrency);
+              }}
               className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm font-medium focus:border-blue-500 focus:outline-none"
             >
               <option value="INR">INR</option>
@@ -328,4 +355,8 @@ export default function CardInput({ onSubmit }: CardInputProps) {
       </form>
     </div>
   );
-}
+});
+
+CardInput.displayName = 'CardInput';
+
+export default CardInput;
