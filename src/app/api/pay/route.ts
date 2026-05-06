@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PaymentPayload, GatewayResponse } from '@/types';
 
+export const dynamic = 'force-dynamic';
+
 interface ApiResponse extends GatewayResponse {}
 
 function delay(ms: number): Promise<void> {
