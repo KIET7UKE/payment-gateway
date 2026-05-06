@@ -70,8 +70,8 @@ export default function TransactionHistory() {
               {formatDate(tx.timestamp)}
             </p>
             <span className="text-white/10 text-[8px]">•</span>
-            <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider truncate max-w-[100px]">
-              {tx.cardholderName || 'Customer'}
+            <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider truncate max-w-[150px]">
+              {tx.cardholderName || 'Unnamed'}
             </p>
           </div>
         </div>
@@ -103,7 +103,7 @@ export default function TransactionHistory() {
       </div>
       <div className="p-6 space-y-4">
         {[
-          { label: 'Customer', value: tx.cardholderName?.toUpperCase() || 'ROHAL BISWAL', icon: <User size={10} className="text-indigo-400" /> },
+          { label: 'User Name', value: tx.cardholderName?.toUpperCase() || 'UNNAMED', icon: <User size={10} className="text-indigo-400" /> },
           { label: 'Transaction ID', value: tx.id, mono: true },
           { label: 'Status', value: tx.status, highlight: true },
           { label: 'Amount', value: formatCurrency(tx.amount, tx.currency) },
@@ -151,7 +151,7 @@ export default function TransactionHistory() {
           <div className="flex items-center justify-between border-b border-white/5 bg-white/1 px-6 py-5">
             <div className="flex items-center gap-3">
               <Activity size={14} className="text-indigo-400" />
-              <h2 className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Recent Activity</h2>
+              <h2 className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Transaction History</h2>
             </div>
           </div>
           
@@ -175,7 +175,7 @@ export default function TransactionHistory() {
             className="flex w-full items-center justify-center gap-2 border-t border-white/5 bg-white/1 p-4 text-[9px] font-black uppercase tracking-[0.2em] text-indigo-400 transition-all hover:bg-indigo-500/10"
           >
             <Maximize2 size={10} />
-            Expand Ledger ({history.length})
+            View Full History ({history.length})
           </button>
         </div>
       </div>
@@ -187,7 +187,7 @@ export default function TransactionHistory() {
             <div className="flex items-center justify-between border-b border-white/10 bg-white/2 px-8 py-5">
               <div className="flex items-center gap-4">
                 <History size={16} className="text-indigo-400" />
-                <h2 className="text-sm font-black text-white uppercase tracking-tight">Financial Ledger</h2>
+                <h2 className="text-sm font-black text-white uppercase tracking-tight">Transaction Logs</h2>
               </div>
               <button onClick={() => setIsModalOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-zinc-500 hover:text-white transition-all"><X size={16} /></button>
             </div>

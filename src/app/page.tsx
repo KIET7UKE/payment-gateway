@@ -42,12 +42,12 @@ export default function PaymentPage() {
               </div>
               <div>
                 <h1 className="text-xl font-bold tracking-tight text-white uppercase">
-                  Control Center
+                  Mock Payment Gateway
                 </h1>
                 <div className="flex items-center gap-2">
                   <Zap size={10} className="text-indigo-400 fill-indigo-400" />
                   <p className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em]">
-                    Obsidian Prime Gateway
+                    Obsidian Sandbox Gateway
                   </p>
                 </div>
               </div>
@@ -59,7 +59,7 @@ export default function PaymentPage() {
                 <div className="relative h-1.5 w-1.5 rounded-full bg-indigo-400" />
               </div>
               <span className="text-[9px] font-black text-indigo-400 uppercase tracking-[0.2em]">
-                Live Terminal
+                Demo Mode
               </span>
             </div>
           </header>

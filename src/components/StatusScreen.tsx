@@ -80,8 +80,8 @@ const StatusScreen: React.FC<StatusScreenProps> = ({ focusFormCallback, onRetry 
         {/* Content */}
         {status === 'processing' && (
           <div className="space-y-3">
-            <h2 className="text-2xl font-black text-white tracking-tight uppercase">Authorizing</h2>
-            <p className="text-sm font-medium text-zinc-400">Verifying details with your bank...</p>
+            <h2 className="text-2xl font-black text-white tracking-tight uppercase">Processing</h2>
+            <p className="text-sm font-medium text-zinc-400">Verifying your request...</p>
             {attemptCount > 1 && (
               <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] pt-4">
                 Attempt {attemptCount} of 3
@@ -93,14 +93,14 @@ const StatusScreen: React.FC<StatusScreenProps> = ({ focusFormCallback, onRetry 
         {status === 'success' && (
           <div className="space-y-3">
             <h2 className="text-2xl font-black text-white tracking-tight uppercase">Success</h2>
-            <p className="text-sm font-medium text-zinc-400">Your payment has been authorized and processed.</p>
+            <p className="text-sm font-medium text-zinc-400">Your payment was successful.</p>
           </div>
         )}
 
         {(status === 'failed' || status === 'timeout') && (
           <div role="alert" className="space-y-3">
             <h2 className="text-2xl font-black text-white tracking-tight uppercase">
-              {status === 'timeout' ? 'Timeout' : 'Declined'}
+               {status === 'timeout' ? 'Timeout' : 'Payment Failed'}
             </h2>
             <p className="text-sm font-bold text-red-400">{failureReason || 'Transaction could not be completed'}</p>
             <p className="text-xs text-zinc-500">Please check your details and try again.</p>

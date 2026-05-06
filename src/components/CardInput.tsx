@@ -148,7 +148,7 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="h-2 w-2 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
-              <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-white">Payment Secure</h2>
+              <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-white">New Transaction</h2>
             </div>
             <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">
               Attempt {attemptCount + 1} of 3
