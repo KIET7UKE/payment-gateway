@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import CardInput from '@/components/CardInput';
 import CardPreview from '@/components/CardPreview';
 import StatusScreen from '@/components/StatusScreen';
@@ -15,6 +15,11 @@ export default function PaymentPage() {
   const { submitPayment, retryPayment } = usePayment();
   const paymentStatus = useAppSelector((state) => state.payment.status);
   const firstFieldRef = useRef<HTMLInputElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const [previewValues, setPreviewValues] = useState({
     cardholderName: '',
@@ -65,48 +70,77 @@ export default function PaymentPage() {
           </header>
 
           {/* Main Grid - Balanced 2-Column Layout */}
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start">
-
-            {/* Left Section: Payment Logic (Cols 1-7) */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="animate-in fade-in slide-in-from-left-4 duration-500">
-                <CardInput
-                  ref={firstFieldRef}
-                  onSubmit={submitPayment}
-                  onValuesChange={setPreviewValues}
-                />
-              </div>
-
-              {paymentStatus !== 'idle' && (
-                <div className="fixed inset-0 z-100 flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl animate-in fade-in duration-300">
-                  <div className="w-full max-w-md animate-in zoom-in-95 duration-500">
-                    <StatusScreen
-                      focusFormCallback={focusFormCallback}
-                      onRetry={retryPayment}
-                    />
+          {!mounted ? (
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start w-full animate-pulse">
+              <div className="lg:col-span-7 space-y-6">
+                <div className="glass-panel p-8 md:p-10 rounded-[32px] w-full min-h-[500px]">
+                  <div className="h-6 bg-white/10 rounded w-1/3 mb-10"></div>
+                  <div className="space-y-6">
+                    <div className="h-11 bg-white/5 rounded-xl w-full"></div>
+                    <div className="h-11 bg-white/5 rounded-xl w-full"></div>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="h-11 bg-white/5 rounded-xl w-full"></div>
+                      <div className="h-11 bg-white/5 rounded-xl w-full"></div>
+                    </div>
+                    <div className="h-14 bg-white/10 rounded-2xl w-full mt-8"></div>
                   </div>
                 </div>
-              )}
-            </div>
-
-            {/* Right Section: Visualization (Cols 8-12) */}
-            <div className="lg:col-span-5 space-y-8">
-              <div className="flex flex-col items-center animate-in fade-in slide-in-from-right-4 duration-700">
-                <CardPreview
-                  cardholderName={previewValues.cardholderName}
-                  cardNumber={previewValues.cardNumber}
-                  expiryMonth={previewValues.expiryMonth}
-                  expiryYear={previewValues.expiryYear}
-                  cardType={previewValues.cardType}
-                />
               </div>
 
-              <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-                <TransactionHistory />
+              <div className="lg:col-span-5 space-y-8 flex flex-col items-center">
+                <div className="w-full max-w-[340px] h-[200px] bg-white/10 rounded-[24px] shadow-lg backdrop-blur-md"></div>
+                <div className="w-full glass-panel p-6 rounded-[24px] min-h-[250px]">
+                  <div className="h-4 bg-white/10 rounded w-1/2 mb-6"></div>
+                  <div className="space-y-4">
+                    <div className="h-12 bg-white/5 rounded-xl w-full"></div>
+                    <div className="h-12 bg-white/5 rounded-xl w-full"></div>
+                    <div className="h-12 bg-white/5 rounded-xl w-full"></div>
+                  </div>
+                </div>
               </div>
             </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start">
+              {/* Left Section: Payment Logic (Cols 1-7) */}
+              <div className="lg:col-span-7 space-y-6">
+                <div className="animate-in fade-in slide-in-from-left-4 duration-500">
+                  <CardInput
+                    ref={firstFieldRef}
+                    onSubmit={submitPayment}
+                    onValuesChange={setPreviewValues}
+                  />
+                </div>
 
-          </div>
+                {paymentStatus !== 'idle' && (
+                  <div className="fixed inset-0 z-100 flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl animate-in fade-in duration-300">
+                    <div className="w-full max-w-md animate-in zoom-in-95 duration-500">
+                      <StatusScreen
+                        focusFormCallback={focusFormCallback}
+                        onRetry={retryPayment}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Section: Visualization (Cols 8-12) */}
+              <div className="lg:col-span-5 space-y-8">
+                <div className="flex flex-col items-center animate-in fade-in slide-in-from-right-4 duration-700">
+                  <CardPreview
+                    cardholderName={previewValues.cardholderName}
+                    cardNumber={previewValues.cardNumber}
+                    expiryMonth={previewValues.expiryMonth}
+                    expiryYear={previewValues.expiryYear}
+                    cardType={previewValues.cardType}
+                  />
+                </div>
+
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+                  <TransactionHistory />
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Footer - Minimalist */}
           <footer className="mt-20 border-t border-white/5 pt-8 flex flex-col items-center sm:flex-row sm:justify-between opacity-30 transition-opacity hover:opacity-100">
