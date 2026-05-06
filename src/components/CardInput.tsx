@@ -161,7 +161,15 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
   };
 
   const isProcessing = paymentStatus === 'processing';
-  const isFormValid = cardholderName.length >= 2 && cardNumber.replace(/\s/g, '').length >= 15 && expiry.length === 5 && cvv.length >= 3 && amount.length > 0;
+  const isFormValid = useMemo(() => {
+    if (!cardholderName || !cardNumber || !expiry || !cvv || !amount) return false;
+    const [m, y] = expiry.split('/');
+    return !validateCardholderName(cardholderName) &&
+           !validateCardNumber(cardNumber, cardType) &&
+           !validateExpiry(m || '', y || '') &&
+           !validateCvv(cvv, cardType) &&
+           !validateAmount(amount);
+  }, [cardholderName, cardNumber, cardType, expiry, cvv, amount]);
 
   return (
     <div className="w-full">
@@ -187,14 +195,17 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
             </label>
             <input
               ref={ref}
+              id="cardholderName"
               type="text"
               value={cardholderName}
               onChange={(e) => { setCardholderName(e.target.value); notifyChange({ cardholderName: e.target.value }); }}
               onBlur={() => handleBlur('cardholderName', cardholderName)}
-              className="glass-input h-11 w-full rounded-xl px-4 text-sm font-medium transition-all"
+              className={`glass-input h-11 w-full rounded-xl px-4 text-sm font-medium transition-all ${errors.cardholderName ? 'border-red-500/50' : ''}`}
               placeholder="e.g. ROHAL BISWAL"
+              aria-invalid={!!errors.cardholderName}
+              aria-describedby={errors.cardholderName ? "cardholderName-error" : undefined}
             />
-            {errors.cardholderName && <p className="text-[9px] font-bold text-red-400 uppercase tracking-wider ml-1">{errors.cardholderName}</p>}
+            {errors.cardholderName && <p id="cardholderName-error" className="text-[9px] font-bold text-red-400 uppercase tracking-wider ml-1">{errors.cardholderName}</p>}
           </div>
 
           {/* Card Number */}
@@ -205,12 +216,15 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
             </label>
             <div className="relative">
               <input
+                id="cardNumber"
                 type="text"
                 value={cardNumber}
                 onChange={handleCardNumberChange}
                 onBlur={() => handleBlur('cardNumber', cardNumber)}
-                className="glass-input h-11 w-full rounded-xl px-4 text-sm font-medium tracking-widest"
+                className={`glass-input h-11 w-full rounded-xl px-4 text-sm font-medium tracking-widest ${errors.cardNumber ? 'border-red-500/50' : ''}`}
                 placeholder="0000 0000 0000 0000"
+                aria-invalid={!!errors.cardNumber}
+                aria-describedby={errors.cardNumber ? "cardNumber-error" : undefined}
               />
               {cardType !== 'unknown' && (
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg border border-white/10 bg-white/5 px-2 py-0.5 text-[8px] font-black uppercase text-zinc-400">
@@ -218,7 +232,7 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
                 </div>
               )}
             </div>
-            {errors.cardNumber && <p className="text-[9px] font-bold text-red-400 uppercase tracking-wider ml-1">{errors.cardNumber}</p>}
+            {errors.cardNumber && <p id="cardNumber-error" className="text-[9px] font-bold text-red-400 uppercase tracking-wider ml-1">{errors.cardNumber}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-6">
@@ -228,14 +242,17 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
                 Expiry Date
               </label>
               <input
+                id="expiry"
                 type="text"
                 value={expiry}
                 onChange={handleExpiryChange}
                 onBlur={() => handleBlur('expiry', expiry)}
-                className="glass-input h-11 w-full rounded-xl px-4 text-sm font-medium"
+                className={`glass-input h-11 w-full rounded-xl px-4 text-sm font-medium ${errors.expiry ? 'border-red-500/50' : ''}`}
                 placeholder="MM / YY"
+                aria-invalid={!!errors.expiry}
+                aria-describedby={errors.expiry ? "expiry-error" : undefined}
               />
-              {errors.expiry && <p className="text-[9px] font-bold text-red-400 uppercase tracking-wider ml-1">{errors.expiry}</p>}
+              {errors.expiry && <p id="expiry-error" className="text-[9px] font-bold text-red-400 uppercase tracking-wider ml-1">{errors.expiry}</p>}
             </div>
 
             <div className="space-y-1.5">
@@ -244,14 +261,17 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
                 CVV
               </label>
               <input
+                id="cvv"
                 type="password"
                 value={cvv}
                 onChange={handleCvvChange}
                 onBlur={() => handleBlur('cvv', cvv)}
-                className="glass-input h-11 w-full rounded-xl px-4 text-sm font-medium"
+                className={`glass-input h-11 w-full rounded-xl px-4 text-sm font-medium ${errors.cvv ? 'border-red-500/50' : ''}`}
                 placeholder="•••"
+                aria-invalid={!!errors.cvv}
+                aria-describedby={errors.cvv ? "cvv-error" : undefined}
               />
-              {errors.cvv && <p className="text-[9px] font-bold text-red-400 uppercase tracking-wider ml-1">{errors.cvv}</p>}
+              {errors.cvv && <p id="cvv-error" className="text-[9px] font-bold text-red-400 uppercase tracking-wider ml-1">{errors.cvv}</p>}
             </div>
           </div>
 
@@ -262,14 +282,17 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
                 Amount
               </label>
               <input
+                id="amount"
                 type="number"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 onBlur={() => handleBlur('amount', amount)}
-                className="glass-input h-11 w-full rounded-xl px-4 text-sm font-bold"
+                className={`glass-input h-11 w-full rounded-xl px-4 text-sm font-bold ${errors.amount ? 'border-red-500/50' : ''}`}
                 placeholder="0.00"
+                aria-invalid={!!errors.amount}
+                aria-describedby={errors.amount ? "amount-error" : undefined}
               />
-              {errors.amount && <p className="text-[9px] font-bold text-red-400 uppercase tracking-wider ml-1">{errors.amount}</p>}
+              {errors.amount && <p id="amount-error" className="text-[9px] font-bold text-red-400 uppercase tracking-wider ml-1">{errors.amount}</p>}
             </div>
 
             <div className="space-y-1.5">

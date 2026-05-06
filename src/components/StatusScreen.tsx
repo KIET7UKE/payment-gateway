@@ -103,7 +103,11 @@ const StatusScreen: React.FC<StatusScreenProps> = ({ focusFormCallback, onRetry 
                {status === 'timeout' ? 'Timeout' : 'Payment Failed'}
             </h2>
             <p className="text-sm font-bold text-red-400">{failureReason || 'Transaction could not be completed'}</p>
-            <p className="text-xs text-zinc-500">Please check your details and try again.</p>
+            {isMaxRetries ? (
+              <p className="text-xs text-red-400/80 font-bold mt-2">Maximum retry attempts reached. Transaction cancelled.</p>
+            ) : (
+              <p className="text-xs text-zinc-500">Please check your details and try again.</p>
+            )}
           </div>
         )}
 

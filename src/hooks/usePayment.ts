@@ -14,7 +14,7 @@ import { addTransaction, updateTransaction } from '@/store/transactionSlice';
 import { PaymentPayload, Transaction, GatewayResponse } from '@/types';
 
 const MAX_RETRIES = 3;
-const TIMEOUT_MS = 15000; // 15s grace period
+const TIMEOUT_MS = 6000; // 6s timeout as per requirements
 
 export function usePayment() {
   const dispatch = useAppDispatch();

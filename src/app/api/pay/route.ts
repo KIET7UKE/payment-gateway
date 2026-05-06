@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       status = 402;
     } else {
       // Simulate timeout
-      await delay(5000); // 5s simulation
+      await delay(8000); // 8s simulation per requirement
       response = { 
         success: false, 
         transactionId, 

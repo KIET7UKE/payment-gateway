@@ -26,8 +26,8 @@ A premium, highly-accessible Payment Gateway interface built with Next.js 14, Ty
 
 - **Luhn Validation**: Card number validation includes a client-side Luhn algorithm check to catch typos before hitting the API.
 - **Local Persistence**: Transaction history is persisted in `localStorage` (`pg_transactions`) so users don't lose their data on page refresh.
-- **Gateway Simulation**: The API route simulates real-world conditions including success, failure, and network timeouts with randomized outcomes.
-- **Focus Management**: Focus is programmatically managed to move between the form and status screens, ensuring a seamless experience for keyboard and screen-reader users.
+- **Gateway Simulation**: The API route simulates real-world conditions including success (~60%), failure (~25%), and network timeouts (~15%). The backend timeout simulates 8 seconds of delay while the frontend safely aborts after 6 seconds.
+- **Accessibility & Focus Management**: Input error messages are linked to their respective inputs using `aria-describedby` and `aria-invalid` for screen readers. Focus is programmatically managed to move between the form and status screens, ensuring a seamless experience.
 
 ## What I would improve with more time
 
