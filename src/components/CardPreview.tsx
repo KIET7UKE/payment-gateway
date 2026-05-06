@@ -23,15 +23,15 @@ const CardPreview: React.FC<CardPreviewProps> = ({
   const displayCardNumber = useMemo(() => {
     const rawDigits = cardNumber.replace(/\D/g, '');
     const maxLen = cardType === 'amex' ? 15 : 16;
-    const paddedDigits = rawDigits.padEnd(maxLen, '•');
+    const paddedDigits = rawDigits.padEnd(maxLen, 'x');
     return formatCardNumber(paddedDigits, cardType);
   }, [cardNumber, cardType]);
 
-  const formattedName = cardholderName.toUpperCase() || 'ROHAL BISWAL';
-  const displayExpiry = `${expiryMonth.padStart(2, '0') || '00'} / ${expiryYear.padStart(2, '0') || '00'}`;
+  const formattedName = cardholderName.toUpperCase() || 'CARDHOLDER NAME';
+  const displayExpiry = `${expiryMonth.padStart(2, '-') || '--'} / ${expiryYear.padStart(2, '-') || '--'}`;
 
   const renderCardBranding = () => {
-    const brandName = cardType === 'unknown' ? 'SECURE CARD' : cardType.toUpperCase();
+    const brandName = cardType === 'unknown' ? '' : cardType.toUpperCase();
     
     return (
       <div className="flex flex-col items-end">
@@ -67,14 +67,12 @@ const CardPreview: React.FC<CardPreviewProps> = ({
         {/* Bottom Info */}
         <div className="absolute bottom-10 left-10 right-10 flex items-end justify-between">
           <div className="space-y-2">
-            <p className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.2em]">Cardholder</p>
             <p className="text-[15px] font-bold text-white uppercase tracking-wider truncate max-w-[180px]">
               {formattedName}
             </p>
           </div>
           
           <div className="space-y-2 text-right">
-            <p className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.2em]">Expires</p>
             <p className="text-[15px] font-bold text-white tracking-widest font-mono">
               {displayExpiry}
             </p>

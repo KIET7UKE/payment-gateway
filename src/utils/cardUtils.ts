@@ -19,7 +19,8 @@ export function detectCardType(rawNumber: string): CardType {
 }
 
 export function formatCardNumber(rawDigits: string, cardType: CardType): string {
-  const digits = rawDigits.replace(/\D/g, '');
+  // Allow digits and 'x' characters
+  const digits = rawDigits.replace(/[^0-9x]/g, '');
   
   if (cardType === 'amex') {
     // Amex: 4-6-5
@@ -28,12 +29,12 @@ export function formatCardNumber(rawDigits: string, cardType: CardType): string 
       digits.substring(4, 10),
       digits.substring(10, 15),
     ].filter(Boolean);
-    return parts.join(' ');
+    return parts.join('-');
   }
   
   // Default: groups of 4
   const parts = digits.match(/.{1,4}/g) || [];
-  return parts.join(' ').substring(0, 19); // 16 digits + 3 spaces
+  return parts.join('-').substring(0, 19); // 16 digits + 3 hyphens
 }
 
 export function getCvvLength(cardType: CardType): number {

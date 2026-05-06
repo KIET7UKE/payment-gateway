@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, forwardRef, useRef } from 'react';
+import React, { useState, useMemo, forwardRef, useRef, useEffect } from 'react';
 import { 
   Lock, 
   CreditCard, 
@@ -50,6 +50,7 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
   const [amount, setAmount] = useState('');
   const [currency, setCurrency] = useState<Currency>('INR');
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const lastSubmitTime = useRef<number>(0);
   const cardType = useMemo(() => detectCardType(cardNumber), [cardNumber]);
 
@@ -70,7 +71,28 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
     });
   };
 
-  const [errors, setErrors] = useState<FormErrors>({});
+  // Clear fields on successful payment
+  useEffect(() => {
+    if (paymentStatus === 'success') {
+      setCardholderName('');
+      setCardNumber('');
+      setExpiry('');
+      setCvv('');
+      setAmount('');
+      setTouched({});
+      setErrors({});
+      
+      // Update parent preview
+      onValuesChange({
+        cardholderName: '',
+        cardNumber: '',
+        expiryMonth: '',
+        expiryYear: '',
+        cardType: 'unknown',
+        cvv: '***'
+      });
+    }
+  }, [paymentStatus, onValuesChange]);
 
   const validateField = (name: string, value: string) => {
     let error: string | undefined;
@@ -129,7 +151,7 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
       const [m, y] = expiry.split('/');
       onSubmit({
         transactionId,
-        cardDetails: { cardholderName, cardNumber: cardNumber.replace(/\s/g, ''), expiryMonth: m, expiryYear: y, cvv },
+        cardDetails: { cardholderName, cardNumber: cardNumber.replace(/\D/g, ''), expiryMonth: m, expiryYear: y, cvv },
         amount: parseFloat(amount),
         currency,
         attemptNumber: attemptCount + 1,
