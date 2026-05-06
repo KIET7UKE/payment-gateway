@@ -201,7 +201,7 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
               onChange={(e) => { setCardholderName(e.target.value); notifyChange({ cardholderName: e.target.value }); }}
               onBlur={() => handleBlur('cardholderName', cardholderName)}
               className={`glass-input h-11 w-full rounded-xl px-4 text-sm font-medium transition-all ${errors.cardholderName ? 'border-red-500/50' : ''}`}
-              placeholder="e.g. ROHAL BISWAL"
+              placeholder="e.g. Sahil Sharma"
               aria-invalid={!!errors.cardholderName}
               aria-describedby={errors.cardholderName ? "cardholderName-error" : undefined}
             />
@@ -284,8 +284,14 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
               <input
                 id="amount"
                 type="number"
+                min="0"
+                step="any"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val.includes('-')) return;
+                  setAmount(val);
+                }}
                 onBlur={() => handleBlur('amount', amount)}
                 className={`glass-input h-11 w-full rounded-xl px-4 text-sm font-bold ${errors.amount ? 'border-red-500/50' : ''}`}
                 placeholder="0.00"
