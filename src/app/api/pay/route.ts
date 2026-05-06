@@ -38,10 +38,10 @@ export async function POST(request: NextRequest) {
     let status = 200;
 
     if (outcome === 'success') {
-      await delay(300);
+      await delay(1500); // 1.5s is enough to feel real but not hang
       response = { success: true, transactionId };
     } else if (outcome === 'failed') {
-      await delay(300);
+      await delay(1500);
       response = { 
         success: false, 
         transactionId, 
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       status = 402;
     } else {
       // Simulate timeout
-      await delay(8000);
+      await delay(5000); // 5s simulation
       response = { 
         success: false, 
         transactionId, 

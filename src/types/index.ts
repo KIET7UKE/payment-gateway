@@ -18,6 +18,7 @@ export interface PaymentPayload {
   amount: number;
   currency: Currency;
   attemptNumber: number;
+  cardType?: CardType;
 }
 
 export interface Transaction {
@@ -26,6 +27,8 @@ export interface Transaction {
   currency: Currency;
   status: PaymentStatus;
   timestamp: string;         // ISO string
+  cardType: CardType;
+  cardholderName?: string;
   failureReason?: string;
   attemptCount: number;
 }

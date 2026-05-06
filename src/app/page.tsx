@@ -9,21 +9,20 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { usePayment } from '@/hooks/usePayment';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { CardType } from '@/types';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Zap } from 'lucide-react';
 
 export default function PaymentPage() {
-  const { submitPayment } = usePayment();
+  const { submitPayment, retryPayment } = usePayment();
   const paymentStatus = useAppSelector((state) => state.payment.status);
-  
   const firstFieldRef = useRef<HTMLInputElement>(null);
 
-  // State for live card preview
   const [previewValues, setPreviewValues] = useState({
     cardholderName: '',
     cardNumber: '',
     expiryMonth: '',
     expiryYear: '',
     cardType: 'unknown' as CardType,
+    cvv: '***'
   });
 
   const focusFormCallback = () => {
@@ -32,36 +31,65 @@ export default function PaymentPage() {
 
   return (
     <ErrorBoundary>
-      <main className="min-h-screen bg-gray-50 py-8 px-4 sm:py-12">
-        <div className="mx-auto max-w-6xl">
+      <main className="min-h-screen selection:bg-indigo-500/30 selection:text-white">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:py-20">
+          
           {/* Header */}
-          <header className="mb-10 flex items-center justify-between px-2">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-200">
-                <ShieldCheck size={24} />
+          <header className="mb-16 flex flex-col items-center justify-between gap-6 sm:flex-row sm:px-4">
+            <div className="flex items-center gap-5">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 shadow-[0_0_40px_rgba(99,102,241,0.5)] ring-1 ring-white/20">
+                <ShieldCheck size={32} className="text-white" />
               </div>
-              <div>
-                <h1 className="text-xl font-black tracking-tight text-gray-900 uppercase">
-                  SecurePay<span className="text-indigo-600">Gateway</span>
+              <div className="space-y-1">
+                <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+                  Payment Dashboard
                 </h1>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                  Trusted by 2M+ businesses
-                </p>
+                <div className="flex items-center gap-2">
+                  <Zap size={12} className="text-indigo-400 fill-indigo-400" />
+                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.4em]">
+                    SecurePay <span className="text-white/20 mx-1">|</span> Fast & Secure
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="hidden sm:block">
-              <span className="rounded-full bg-white px-4 py-1.5 text-xs font-bold text-gray-500 shadow-sm ring-1 ring-gray-100">
-                Production Environment
+            
+            <div className="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/2 px-6 py-3 backdrop-blur-xl">
+              <div className="relative flex h-2 w-2">
+                <div className="absolute h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75" />
+                <div className="relative h-2 w-2 rounded-full bg-indigo-400" />
+              </div>
+              <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">
+                Live Secure
               </span>
             </div>
           </header>
 
-          {/* Layout Grid */}
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
+          {/* Core Interface */}
+          <div className="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:items-start lg:gap-24">
             
-            {/* Left Column: Preview & Input */}
-            <div className="space-y-8">
-              <section className="flex flex-col items-center">
+            {/* Left Column: Form */}
+            <div className="space-y-12">
+              {paymentStatus === 'idle' && (
+                <CardInput 
+                  ref={firstFieldRef}
+                  onSubmit={submitPayment}
+                  onValuesChange={setPreviewValues}
+                />
+              )}
+              
+              {paymentStatus !== 'idle' && (
+                <div className="animate-in fade-in zoom-in-95 duration-500">
+                  <StatusScreen 
+                    focusFormCallback={focusFormCallback} 
+                    onRetry={retryPayment}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Right Column: Card & History */}
+            <div className="space-y-16">
+              <div className="flex flex-col items-center animate-in fade-in slide-in-from-right-10 duration-700">
                 <CardPreview 
                   cardholderName={previewValues.cardholderName}
                   cardNumber={previewValues.cardNumber}
@@ -69,51 +97,27 @@ export default function PaymentPage() {
                   expiryYear={previewValues.expiryYear}
                   cardType={previewValues.cardType}
                 />
-              </section>
+              </div>
 
-              {paymentStatus === 'idle' && (
-                <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <CardInput 
-                    ref={firstFieldRef}
-                    onSubmit={submitPayment}
-                    onValuesChange={setPreviewValues}
-                  />
-                </section>
-              )}
-            </div>
-
-            {/* Right Column: Status & History */}
-            <div className="space-y-8">
-              {paymentStatus !== 'idle' && (
-                <section className="animate-in fade-in zoom-in-95 duration-500">
-                  <StatusScreen focusFormCallback={focusFormCallback} />
-                </section>
-              )}
-
-              <section className="animate-in fade-in slide-in-from-bottom-4 delay-150 duration-500">
-                <TransactionHistory />
-              </section>
+              <TransactionHistory />
             </div>
 
           </div>
 
           {/* Footer */}
-          <footer className="mt-16 border-t border-gray-200 pt-8 text-center">
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-widest">
-              &copy; 2026 SecurePay Gateway Inc. All rights reserved.
-            </p>
-            <div className="mt-4 flex justify-center gap-6 opacity-30 grayscale transition-all hover:opacity-100 hover:grayscale-0">
-              <span className="text-sm font-black italic">VISA</span>
-              <span className="text-sm font-black italic">MasterCard</span>
-              <span className="text-sm font-black italic">AMEX</span>
-              <span className="text-sm font-black italic">PCI DSS</span>
+          <footer className="mt-24 border-t border-white/5 pt-12 flex flex-col items-center gap-8">
+            <div className="flex flex-wrap justify-center gap-12 opacity-10 transition-all hover:opacity-40 grayscale contrast-125">
+              <span className="text-xs font-black tracking-[0.3em] text-white">VISA</span>
+              <span className="text-xs font-black tracking-[0.3em] text-white">MASTERCARD</span>
+              <span className="text-xs font-black tracking-[0.3em] text-white">SECURE</span>
+              <span className="text-xs font-black tracking-[0.3em] text-white">ENCRYPTED</span>
             </div>
+            <p className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.5em]">
+              &copy; 2026 SecurePay Inc.
+            </p>
           </footer>
         </div>
       </main>
-      <div className="sr-only" aria-hidden="true">
-        {/* End boundary for ErrorBoundary */}
-      </div>
     </ErrorBoundary>
   );
 }

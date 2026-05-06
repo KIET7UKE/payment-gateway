@@ -2,104 +2,87 @@
 
 import React, { useMemo } from 'react';
 import { CardType } from '@/types';
-import { formatCardNumber, getMaxCardLength } from '@/utils/cardUtils';
+import { formatCardNumber } from '@/utils/cardUtils';
 
 interface CardPreviewProps {
   cardholderName: string;
-  cardNumber: string; // raw digits, no spaces
+  cardNumber: string;     // raw digits
   expiryMonth: string;
   expiryYear: string;
   cardType: CardType;
+  cvv?: string;
 }
 
-export default function CardPreview({
+const CardPreview: React.FC<CardPreviewProps> = ({
   cardholderName,
   cardNumber,
   expiryMonth,
   expiryYear,
   cardType,
-}: CardPreviewProps) {
-  const maxLength = useMemo(() => getMaxCardLength(cardType), [cardType]);
-
+}) => {
   const displayCardNumber = useMemo(() => {
-    const raw = cardNumber.replace(/\D/g, '');
-    const padded = raw.padEnd(maxLength, '•');
-    return formatCardNumber(padded, cardType);
-  }, [cardNumber, cardType, maxLength]);
+    const rawDigits = cardNumber.replace(/\D/g, '');
+    const maxLen = cardType === 'amex' ? 15 : 16;
+    const paddedDigits = rawDigits.padEnd(maxLen, '•');
+    return formatCardNumber(paddedDigits, cardType);
+  }, [cardNumber, cardType]);
 
-  const displayName = cardholderName.trim() || 'YOUR NAME';
-  const displayExpiry = (expiryMonth || 'MM') + '/' + (expiryYear || 'YY');
+  const formattedName = cardholderName.toUpperCase() || 'ROHAL BISWAL';
+  const displayExpiry = `${expiryMonth.padStart(2, '0') || '00'} / ${expiryYear.padStart(2, '0') || '00'}`;
+
+  const renderCardBranding = () => {
+    const brandName = cardType === 'unknown' ? 'SECURE CARD' : cardType.toUpperCase();
+    
+    return (
+      <div className="flex flex-col items-end">
+        <span className="text-[12px] font-black tracking-[0.25em] text-white uppercase drop-shadow-sm">
+          {brandName}
+        </span>
+        <div className="h-px w-full bg-linear-to-l from-white/40 to-transparent mt-1" />
+      </div>
+    );
+  };
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      {/* Card UI */}
-      <div
-        role="presentation"
-        className="relative h-[220px] w-full max-w-[380px] overflow-hidden rounded-2xl bg-zinc-900 p-8 text-white shadow-2xl transition-all duration-500 hover:scale-[1.02]"
-      >
-        {/* Card Type Badge */}
-        <div className="absolute top-8 right-8">
-          {cardType !== 'unknown' && (
-            <div className="rounded bg-white/10 px-3 py-1 text-xs font-black tracking-widest uppercase ring-1 ring-white/20 transition-all duration-300">
-              {cardType}
-            </div>
-          )}
+    <div className="relative w-full max-w-[400px] h-[250px] animate-in fade-in zoom-in-95 duration-700">
+      <div className="absolute inset-0 rounded-[28px] bg-[#0A0A0A] border border-white/5 overflow-hidden shadow-2xl">
+        <div className="absolute inset-0 bg-radial-at-tl from-indigo-500/10 via-transparent to-transparent opacity-40" />
+        
+        {/* Top Section */}
+        <div className="absolute top-10 left-10 right-10 flex items-start justify-between">
+          {/* Brass Chip */}
+          <div className="relative h-[34px] w-[46px] overflow-hidden rounded-[6px] bg-linear-to-br from-[#D4AF37] to-[#8A6D3B] p-[1.5px] shadow-lg">
+          </div>
+          
+          {renderCardBranding()}
         </div>
-
-        {/* Chip Icon Simulation */}
-        <div className="mb-10 h-10 w-14 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-600 opacity-80" />
 
         {/* Card Number */}
-        <div className="mb-6 overflow-hidden">
-          <div 
-            key={displayCardNumber}
-            className="animate-in slide-in-from-bottom-1 fade-in font-mono text-2xl tracking-[0.15em] transition-all duration-300"
-          >
+        <div className="absolute top-[115px] left-10 w-full">
+          <p className="text-[20px] font-bold tracking-[0.18em] text-white font-mono">
             {displayCardNumber}
-          </div>
+          </p>
         </div>
 
-        <div className="flex items-end justify-between">
-          {/* Cardholder Name */}
-          <div className="flex flex-col gap-1 overflow-hidden">
-            <span className="text-[10px] font-medium tracking-widest text-zinc-400 uppercase">
-              Card Holder
-            </span>
-            <div 
-              key={displayName}
-              className="animate-in slide-in-from-bottom-1 fade-in truncate text-sm font-bold tracking-widest uppercase transition-all duration-300"
-            >
-              {displayName}
-            </div>
+        {/* Bottom Info */}
+        <div className="absolute bottom-10 left-10 right-10 flex items-end justify-between">
+          <div className="space-y-2">
+            <p className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.2em]">Cardholder</p>
+            <p className="text-[15px] font-bold text-white uppercase tracking-wider truncate max-w-[180px]">
+              {formattedName}
+            </p>
           </div>
-
-          {/* Expiry Date */}
-          <div className="flex flex-col items-end gap-1 overflow-hidden">
-            <span className="text-[10px] font-medium tracking-widest text-zinc-400 uppercase">
-              Expires
-            </span>
-            <div 
-              key={displayExpiry}
-              className="animate-in slide-in-from-bottom-1 fade-in font-mono text-sm font-bold transition-all duration-300"
-            >
+          
+          <div className="space-y-2 text-right">
+            <p className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.2em]">Expires</p>
+            <p className="text-[15px] font-bold text-white tracking-widest font-mono">
               {displayExpiry}
-            </div>
+            </p>
           </div>
         </div>
-
-        {/* Decorative Circles */}
-        <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-white/5 blur-3xl" />
-        <div className="absolute -top-10 -left-10 h-40 w-40 rounded-full bg-blue-500/10 blur-3xl" />
-      </div>
-
-      {/* Accessibility Announcement */}
-      <div aria-live="polite" className="sr-only">
-        Card details updated. 
-        Card number starts with {cardNumber.substring(0, 4) || 'empty'}. 
-        Card type is {cardType}. 
-        Name is {displayName}. 
-        Expiry is {displayExpiry}.
       </div>
     </div>
   );
-}
+};
+
+export default React.memo(CardPreview);

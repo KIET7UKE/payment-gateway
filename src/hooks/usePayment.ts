@@ -14,7 +14,7 @@ import { addTransaction, updateTransaction } from '@/store/transactionSlice';
 import { PaymentPayload, Transaction, GatewayResponse } from '@/types';
 
 const MAX_RETRIES = 3;
-const TIMEOUT_MS = 6000;
+const TIMEOUT_MS = 15000; // 15s grace period
 
 export function usePayment() {
   const dispatch = useAppDispatch();
@@ -28,6 +28,7 @@ export function usePayment() {
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
     try {
+      console.log(`[usePayment] Initiating request to /api/pay for TX: ${payload.transactionId}`);
       const response = await fetch('/api/pay', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -38,6 +39,7 @@ export function usePayment() {
       const data: GatewayResponse = await response.json();
 
       if (response.ok && data.success) {
+        console.log(`[usePayment] Payment SUCCESS for TX: ${payload.transactionId}`);
         dispatch(paymentSuccess());
         dispatch(updateTransaction({ 
           id: payload.transactionId, 
@@ -45,6 +47,7 @@ export function usePayment() {
         }));
       } else {
         const reason = data.failureReason || 'Payment failed';
+        console.warn(`[usePayment] Payment FAILED for TX: ${payload.transactionId} | Reason: ${reason}`);
         dispatch(paymentFailed(reason));
         dispatch(updateTransaction({ 
           id: payload.transactionId, 
@@ -53,12 +56,14 @@ export function usePayment() {
       }
     } catch (error: any) {
       if (error.name === 'AbortError') {
+        console.error(`[usePayment] Request TIMED OUT for TX: ${payload.transactionId}`);
         dispatch(paymentTimeout());
         dispatch(updateTransaction({ 
           id: payload.transactionId, 
           updates: { status: 'timeout', failureReason: 'Request timed out', attemptCount: payload.attemptNumber } 
         }));
       } else {
+        console.error(`[usePayment] Network Error for TX: ${payload.transactionId}`, error);
         const errorMessage = 'Network error. Please try again.';
         dispatch(paymentFailed(errorMessage));
         dispatch(updateTransaction({ 
@@ -85,6 +90,8 @@ export function usePayment() {
       status: 'processing',
       timestamp: new Date().toISOString(),
       attemptCount: 1,
+      cardType: payload.cardType || 'unknown',
+      cardholderName: payload.cardDetails.cardholderName
     };
     dispatch(addTransaction(newTransaction));
 
