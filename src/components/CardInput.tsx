@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, forwardRef } from 'react';
+import React, { useState, useMemo, forwardRef, useRef } from 'react';
 import { 
   PaymentPayload, 
   CardDetails, 
@@ -28,7 +28,6 @@ import { Loader2, CreditCard, Lock, User, Calendar } from 'lucide-react';
 
 interface CardInputProps {
   onSubmit: (payload: PaymentPayload) => void;
-  // Live update props for preview
   onValuesChange: (values: {
     cardholderName: string;
     cardNumber: string;
@@ -53,15 +52,23 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
 
   // Touched State
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+  
+  // Submit debounce guard
+  const lastSubmitTime = useRef<number>(0);
 
   const cardType = useMemo(() => detectCardType(cardNumber), [cardNumber]);
 
   // Notify parent of changes for real-time preview
   const notifyChange = (updates: any) => {
-    const [m, y] = (updates.expiry !== undefined ? updates.expiry : expiry).split('/');
+    const currentName = updates.cardholderName !== undefined ? updates.cardholderName : cardholderName;
+    const currentNumber = updates.cardNumber !== undefined ? updates.cardNumber : cardNumber;
+    const currentExpiry = updates.expiry !== undefined ? updates.expiry : expiry;
+    
+    const [m, y] = currentExpiry.split('/');
+    
     onValuesChange({
-      cardholderName: updates.cardholderName !== undefined ? updates.cardholderName : cardholderName,
-      cardNumber: (updates.cardNumber !== undefined ? updates.cardNumber : cardNumber).replace(/\s/g, ''),
+      cardholderName: currentName,
+      cardNumber: currentNumber.replace(/\s/g, ''),
       expiryMonth: m || '',
       expiryYear: y || '',
       cardType: updates.cardNumber !== undefined ? detectCardType(updates.cardNumber) : cardType,
@@ -135,6 +142,15 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // 1. Debounce guard
+    const now = Date.now();
+    if (now - lastSubmitTime.current < 300) return;
+    lastSubmitTime.current = now;
+
+    // 2. Prevent submission while processing
+    if (paymentStatus === 'processing') return;
+
+    // 3. Full validation
     const isNameValid = validateField('cardholderName', cardholderName);
     const isNumberValid = validateField('cardNumber', cardNumber);
     const isExpiryValid = validateField('expiry', expiry);
@@ -203,6 +219,7 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
             }}
             onBlur={() => handleBlur('cardholderName', cardholderName)}
             aria-describedby={errors.cardholderName ? 'name-error' : undefined}
+            aria-invalid={errors.cardholderName ? 'true' : 'false'}
             className={`w-full rounded-lg border px-4 py-2.5 transition-all focus:outline-none focus:ring-2 ${
               errors.cardholderName ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-100'
             }`}
@@ -233,6 +250,7 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
             onChange={handleCardNumberChange}
             onBlur={() => handleBlur('cardNumber', cardNumber)}
             aria-describedby={errors.cardNumber ? 'number-error' : undefined}
+            aria-invalid={errors.cardNumber ? 'true' : 'false'}
             className={`w-full rounded-lg border px-4 py-2.5 transition-all focus:outline-none focus:ring-2 ${
               errors.cardNumber ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-100'
             }`}
@@ -257,6 +275,7 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
               onChange={handleExpiryChange}
               onBlur={() => handleBlur('expiry', expiry)}
               aria-describedby={errors.expiry ? 'expiry-error' : undefined}
+              aria-invalid={errors.expiry ? 'true' : 'false'}
               className={`w-full rounded-lg border px-4 py-2.5 transition-all focus:outline-none focus:ring-2 ${
                 errors.expiry ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-100'
               }`}
@@ -280,6 +299,7 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
               onChange={handleCvvChange}
               onBlur={() => handleBlur('cvv', cvv)}
               aria-describedby={errors.cvv ? 'cvv-error' : undefined}
+              aria-invalid={errors.cvv ? 'true' : 'false'}
               className={`w-full rounded-lg border px-4 py-2.5 transition-all focus:outline-none focus:ring-2 ${
                 errors.cvv ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-100'
               }`}
@@ -297,11 +317,8 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
           <div className="flex gap-2">
             <select
               value={currency}
-              onChange={(e) => {
-                const newCurrency = e.target.value as Currency;
-                setCurrency(newCurrency);
-              }}
-              className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm font-medium focus:border-blue-500 focus:outline-none"
+              onChange={(e) => setCurrency(e.target.value as Currency)}
+              className="h-[44px] rounded-lg border border-gray-300 bg-gray-50 px-3 text-sm font-medium focus:border-blue-500 focus:outline-none"
             >
               <option value="INR">INR</option>
               <option value="USD">USD</option>
@@ -318,7 +335,8 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
                 }}
                 onBlur={() => handleBlur('amount', amount)}
                 aria-describedby={errors.amount ? 'amount-error' : undefined}
-                className={`w-full rounded-lg border px-4 py-2.5 transition-all focus:outline-none focus:ring-2 ${
+                aria-invalid={errors.amount ? 'true' : 'false'}
+                className={`h-[44px] w-full rounded-lg border px-4 transition-all focus:outline-none focus:ring-2 ${
                   errors.amount ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-100'
                 }`}
                 placeholder="100.00"
@@ -334,7 +352,8 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
         <button
           type="submit"
           disabled={!isFormValid || !allTouched || isProcessing}
-          className={`relative mt-2 w-full overflow-hidden rounded-xl py-3.5 text-sm font-bold tracking-wide text-white transition-all active:scale-[0.98] disabled:opacity-50 ${
+          aria-disabled={isProcessing ? 'true' : 'false'}
+          className={`relative mt-2 flex h-[48px] w-full items-center justify-center overflow-hidden rounded-xl py-3.5 text-sm font-bold tracking-wide text-white transition-all active:scale-[0.98] disabled:opacity-50 ${
             isProcessing ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg'
           }`}
         >

@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useAppSelector } from '@/hooks/useAppSelector';
-import { Transaction } from '@/types';
 import { ChevronDown, ChevronUp, History, Info } from 'lucide-react';
 
 export default function TransactionHistory() {
@@ -58,6 +57,7 @@ export default function TransactionHistory() {
             <button
               onClick={() => toggleExpand(tx.id)}
               aria-expanded={expandedId === tx.id}
+              aria-controls={`details-${tx.id}`}
               className={`flex w-full items-center justify-between p-4 text-left transition-all ${
                 expandedId === tx.id ? 'bg-indigo-50/30' : ''
               }`}
@@ -86,6 +86,7 @@ export default function TransactionHistory() {
 
             {/* Expanded Section */}
             <div 
+              id={`details-${tx.id}`}
               aria-live="polite"
               className={`overflow-hidden transition-all duration-300 ease-in-out ${
                 expandedId === tx.id ? 'max-h-40 border-t border-indigo-100 bg-indigo-50/20 p-4' : 'max-h-0'
