@@ -52,7 +52,7 @@ const StatusScreen: React.FC<StatusScreenProps> = ({ focusFormCallback, onRetry 
       tabIndex={-1}
       className="glass-panel mx-auto flex w-full max-w-md flex-col items-center overflow-hidden rounded-[24px] focus:outline-none"
     >
-      <div className="flex w-full flex-col items-center p-10 text-center">
+      <div className="flex w-full flex-col items-center p-6 sm:p-10 text-center">
         {/* State Icon */}
         <div className="mb-8 relative">
           {status === 'processing' && (

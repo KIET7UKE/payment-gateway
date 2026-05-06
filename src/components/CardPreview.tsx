@@ -44,36 +44,36 @@ const CardPreview: React.FC<CardPreviewProps> = ({
   };
 
   return (
-    <div className="relative w-full max-w-[400px] h-[250px] animate-in fade-in zoom-in-95 duration-700">
-      <div className="absolute inset-0 rounded-[28px] bg-[#0A0A0A] border border-white/5 overflow-hidden shadow-2xl">
+    <div className="relative w-full max-w-[320px] h-[200px] sm:max-w-[400px] sm:h-[250px] animate-in fade-in zoom-in-95 duration-700">
+      <div className="absolute inset-0 rounded-[24px] sm:rounded-[28px] bg-[#0A0A0A] border border-white/5 overflow-hidden shadow-2xl">
         <div className="absolute inset-0 bg-radial-at-tl from-indigo-500/10 via-transparent to-transparent opacity-40" />
         
         {/* Top Section */}
-        <div className="absolute top-10 left-10 right-10 flex items-start justify-between">
+        <div className="absolute top-6 left-6 right-6 sm:top-10 sm:left-10 sm:right-10 flex items-start justify-between">
           {/* Brass Chip */}
-          <div className="relative h-[34px] w-[46px] overflow-hidden rounded-[6px] bg-linear-to-br from-[#D4AF37] to-[#8A6D3B] p-[1.5px] shadow-lg">
+          <div className="relative h-[28px] w-[38px] sm:h-[34px] sm:w-[46px] overflow-hidden rounded-[4px] sm:rounded-[6px] bg-linear-to-br from-[#D4AF37] to-[#8A6D3B] p-[1.5px] shadow-lg">
           </div>
           
           {renderCardBranding()}
         </div>
 
         {/* Card Number */}
-        <div className="absolute top-[115px] left-10 w-full">
-          <p className="text-[20px] font-bold tracking-[0.18em] text-white font-mono">
+        <div className="absolute top-[85px] sm:top-[115px] left-6 sm:left-10 w-full pr-6 sm:pr-10">
+          <p className="text-[16px] sm:text-[20px] font-bold tracking-[0.15em] sm:tracking-[0.18em] text-white font-mono">
             {displayCardNumber}
           </p>
         </div>
 
         {/* Bottom Info */}
-        <div className="absolute bottom-10 left-10 right-10 flex items-end justify-between">
-          <div className="space-y-2">
-            <p className="text-[15px] font-bold text-white uppercase tracking-wider truncate max-w-[180px]">
+        <div className="absolute bottom-6 left-6 right-6 sm:bottom-10 sm:left-10 sm:right-10 flex items-end justify-between">
+          <div className="space-y-1 sm:space-y-2">
+            <p className="text-[12px] sm:text-[15px] font-bold text-white uppercase tracking-wider truncate max-w-[140px] sm:max-w-[180px]">
               {formattedName}
             </p>
           </div>
           
-          <div className="space-y-2 text-right">
-            <p className="text-[15px] font-bold text-white tracking-widest font-mono">
+          <div className="space-y-1 sm:space-y-2 text-right">
+            <p className="text-[12px] sm:text-[15px] font-bold text-white tracking-widest font-mono">
               {displayExpiry}
             </p>
           </div>

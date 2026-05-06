@@ -55,10 +55,10 @@ export default function TransactionHistory() {
 
   const TransactionItem = ({ tx, onClick, showAction = false }: { tx: Transaction, onClick: () => void, showAction?: boolean }) => (
     <div
-      className="flex w-full items-center justify-between px-6 py-4 transition-all hover:bg-white/2"
+      className="flex w-full items-center justify-between px-4 sm:px-6 py-4 transition-all hover:bg-white/2"
     >
-      <div className="flex items-center gap-4">
-        <div className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-all ${getStatusBadge(tx.status)}`}>
+      <div className="flex items-center gap-3 sm:gap-4">
+        <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-all ${getStatusBadge(tx.status)}`}>
           {tx.status === 'success' ? <ArrowUpRight size={14} /> : <ArrowDownLeft size={14} />}
         </div>
         <div>
@@ -70,14 +70,14 @@ export default function TransactionHistory() {
               {formatDate(tx.timestamp)}
             </p>
             <span className="text-white/10 text-[8px]">•</span>
-            <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider truncate max-w-[150px]">
+            <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider truncate max-w-[80px] sm:max-w-[150px]">
               {tx.cardholderName || 'Unnamed'}
             </p>
           </div>
         </div>
       </div>
       
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase border ${getStatusBadge(tx.status)}`}>
           {tx.status}
         </span>
@@ -191,8 +191,8 @@ export default function TransactionHistory() {
               </div>
               <button onClick={() => setIsModalOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-zinc-500 hover:text-white transition-all"><X size={16} /></button>
             </div>
-            <div className="flex flex-1 overflow-hidden">
-              <div className="w-full border-r border-white/5 overflow-y-auto sm:w-1/2 lg:w-2/5">
+            <div className="flex flex-1 flex-col sm:flex-row overflow-hidden">
+              <div className={`w-full border-b sm:border-b-0 sm:border-r border-white/5 overflow-y-auto sm:w-1/2 lg:w-2/5 ${activeModalTx ? 'hidden sm:block' : 'block'}`}>
                 <ul className="divide-y divide-white/3">
                   {history.map((tx) => (
                     <li key={tx.id} onClick={() => setModalSelectedId(tx.id)} className="cursor-pointer">
@@ -201,13 +201,21 @@ export default function TransactionHistory() {
                   ))}
                 </ul>
               </div>
-              <div className="hidden flex-1 overflow-y-auto p-10 sm:block">
+              <div className={`flex-1 overflow-y-auto p-6 sm:p-10 ${activeModalTx ? 'block' : 'hidden sm:block'}`}>
                 {activeModalTx ? (
-                  <div className="">
+                  <div className="space-y-6">
+                    <button 
+                      onClick={() => setModalSelectedId(null)}
+                      className="sm:hidden flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 text-[10px] font-bold text-zinc-400 hover:text-white uppercase tracking-widest transition-all"
+                    >
+                      &larr; Back to List
+                    </button>
                     <DetailsPanel tx={activeModalTx} />
                   </div>
                 ) : (
-                  <div className="flex h-full items-center justify-center text-zinc-600 text-[10px] font-black uppercase tracking-widest text-center px-12">Select an entry from the ledger to view secure details</div>
+                  <div className="flex h-full items-center justify-center text-zinc-600 text-[10px] font-black uppercase tracking-widest text-center px-12">
+                    Select an entry from the ledger to view secure details
+                  </div>
                 )}
               </div>
             </div>

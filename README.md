@@ -1,7 +1,7 @@
-# 💳 Obsidian Prime Terminal - Mock Payment Gateway
+# 💳 SoluLab Mock Payment Gateway
 
 ## 🌟 Overview
-Obsidian Prime Terminal is a highly-polished, enterprise-grade mock payment gateway UI built using **Next.js 14**, **TypeScript**, **Redux Toolkit**, and **Tailwind CSS**. It simulates the entire lifecycle of a payment transaction—from client-side validation to backend simulation—featuring a premium dark-mode, glassmorphism aesthetic.
+SoluLab Mock Payment Gateway is a highly-polished, enterprise-grade mock payment gateway UI built using **Next.js 14**, **TypeScript**, **Redux Toolkit**, and **Tailwind CSS**. It simulates the entire lifecycle of a payment transaction—from client-side validation to backend simulation—featuring a premium dark-mode, glassmorphism aesthetic.
 
 ## 🚀 Key Features
 - **Real-Time Validation**: Instant field validation (Luhn algorithm for CC, MM/YY expiry format, CVV checks).

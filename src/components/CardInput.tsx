@@ -174,7 +174,7 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
   return (
     <div className="w-full">
       <div className="glass-panel overflow-hidden rounded-[24px]">
-        <div className="border-b border-white/5 bg-white/1 px-8 py-5">
+        <div className="border-b border-white/5 bg-white/1 px-6 sm:px-8 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="h-2 w-2 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
@@ -186,7 +186,7 @@ const CardInput = forwardRef<HTMLInputElement, CardInputProps>(({ onSubmit, onVa
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6">
           {/* Cardholder Name */}
           <div className="space-y-1.5">
             <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">
